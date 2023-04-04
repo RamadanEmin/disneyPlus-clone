@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 function Header() {
-  
+
     return (
         <Nav>
             <Logo src="/images/logo.svg" />
@@ -38,13 +38,13 @@ function Header() {
                     <SignOut>
                         <UserImg src={userPhoto} alt={userName} />
                         <DropDown>
-                            <span onClick={signOut}>Sign out</span>
+                            <span>Sign out</span>
                         </DropDown>
                     </SignOut>
 
                 </>)
                 : (<LoginContainer>
-                    <Login onClick={signIn}>Login</Login>
+                    <Login>Login</Login>
                 </LoginContainer>
                 )
             }
