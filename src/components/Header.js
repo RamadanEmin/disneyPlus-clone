@@ -1,6 +1,54 @@
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { auth, provider } from '../firebase';
 import styled from 'styled-components';
+import {
+    selectUserName,
+    selectUserPhoto,
+    setUserLogin,
+    setSignOut
+} from '../features/user/userSlice';
 
 function Header() {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const userName = useSelector(selectUserName);
+    const userPhoto = useSelector(selectUserPhoto);
+
+    useEffect(() => {
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                dispatch(setUserLogin({
+                    name: user.displayName,
+                    email: user.email,
+                    photo: user.photoURL
+                }));
+                navigate('/');
+            }
+        });
+    }, []);
+
+    const signIn = () => {
+        auth.signInWithPopup(provider)
+            .then((result) => {
+                let user = result.user;
+                dispatch(setUserLogin({
+                    name: user.displayName,
+                    email: user.email,
+                    photo: user.photoURL
+                }));
+                navigate('/');
+            });
+    };
+
+    const signOut = () => {
+        auth.signOut()
+            .then(() => {
+                dispatch(setSignOut());
+                navigate('/login');
+            });
+    };
 
     return (
         <Nav>
@@ -38,13 +86,13 @@ function Header() {
                     <SignOut>
                         <UserImg src={userPhoto} alt={userName} />
                         <DropDown>
-                            <span>Sign out</span>
+                            <span onClick={signOut}>Sign out</span>
                         </DropDown>
                     </SignOut>
 
                 </>)
                 : (<LoginContainer>
-                    <Login>Login</Login>
+                    <Login onClick={signIn}>Login</Login>
                 </LoginContainer>
                 )
             }
