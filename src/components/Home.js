@@ -8,13 +8,14 @@ import { setMovies } from '../features/movie/movieSlice';
 import { selectUserName } from '../features/user/userSlice';
 import Recommends from './Recommends';
 import NewDisneys from './NewDisneys';
+import Originals from './Originals';
 
 function Home() {
     const dispatch = useDispatch();
     const userName = useSelector(selectUserName);
     let recommends = [];
     let newDisneys = [];
-
+    let originals = [];
     useEffect(() => {
         db.collection('movies').onSnapshot((snapshot) => {
             snapshot.docs.map((doc) => {
@@ -28,6 +29,10 @@ function Home() {
                         newDisneys = [...newDisneys, { id: doc.id, ...doc.data() }];
                         break;
 
+                    case 'original':
+                        originals = [...originals, { id: doc.id, ...doc.data() }];
+                        break;
+
                     default:
                 }
             });
@@ -35,6 +40,7 @@ function Home() {
                 setMovies({
                     recommend: recommends,
                     newDisney: newDisneys,
+                    original: originals,
                 })
             );
         });
@@ -47,6 +53,7 @@ function Home() {
             <Viewers />
             <Recommends />
             <NewDisneys />
+            <Originals />
         </Container>
     );
 }
